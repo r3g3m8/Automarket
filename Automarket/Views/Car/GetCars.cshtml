@@ -30,15 +30,7 @@
     }
 </style>
 
-<div class="card col-md-12" style="margin: 10px;">
-    <div class="card-buttons-group">
-        <button class='btn btn-primary' id='compareBtnId'>Сравнение</button>
-        @if (User.IsInRole("Admin"))
-        {
-            <button class='btn btn-success' id='addCarId'>Добавить</button>   
-        }
-    </div>
-</div>
+
 
 <div style="padding: 10px;"></div>
 @if (Model == null)
@@ -83,7 +75,14 @@
 }
 else
 {
-    <div class="row">
+    <div class="row" style="margin: 0 40px;">
+        <div class="card-group">
+        <button class='btn btn-primary' style="margin-right: 10px;"id='compareBtnId'>Сравнение</button>
+        @if (User.IsInRole("Admin"))
+        {
+            <button class='btn btn-success' id='addCarId'>Добавить</button>   
+        }
+        </div>
         @foreach (var car in Model)
         {
             <div class="row row-cols-1 text-center">
