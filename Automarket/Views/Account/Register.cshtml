@@ -1,0 +1,152 @@
+﻿@model Automarket.Domain.ViewModels.Account.RegisterViewModel
+
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Регистрация";
+}
+
+<div style="padding: 20px;"></div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <span class="anchor"></span>
+                    <div class="card card-account card-outline-secondary border border-white">
+                        <div class="card-header">
+                            <h3 class="mb-0 text-center paragraphHome text-black">Регистрация</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="confirmId" asp-controller="Account" asp-action="Register" >
+                                <div asp-validation-summary="All" style="font-size:23px; font-family:Impact" class="text-danger text-center"></div>
+                                <div class="form-group">
+                                    <input asp-for="Name" class="form-control textbox-dg font-weight-bold text-center" placeholder="Имя" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <input autocomplete="new-password" asp-for="Password" placeholder="Пароль" class="form-control textbox-dg font-weight-bold text-center" type="password">
+                                </div>
+                                <span class="text-black" style="font-size: small; font-family:'Comic Sans MS'">Пароль должен быть длиной больше 6 символов и иметь только латинские символы</span>
+                                <div class="form-group">
+                                    <input autocomplete="new-password" asp-for="PasswordConfirm" placeholder="Подтвердите пароль" class="form-control textbox-dg font-weight-bold text-center" type="password">
+                                </div>
+                                @*<div class="form-group">
+                                    <input asp-for="VerifyCode" placeholder="Введите код" class="form-control textbox-dg font-weight-bold text-center" type="text">
+                                </div>
+                                onclick="openConfirmModal({ url: '/Account/Confirm', data: '@Model?.Name' })*@
+                                <div>
+                                    <h2 class="paragraphHome text-center pt-2"><a asp-controller="Account" asp-action="Login" style="color:deepskyblue;">Уже есть аккаунт?</a></h2>
+                                </div>
+                                <div class="col-xs-1 text-center">
+                                    <button class=" btn btn-success" id="registerBtn">Отправить</button>
+                                </div>
+                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section pageScripts {
+<script src="~/js/modal.js"></script>
+    <script>
+       let modal = $('#modal'); 
+       //onclick="openConfirmModal({ url: '/Account/Confirm', data: 'Model.Name'})"
+                               //     data-toggle="ajax-modal" data-target="Modal"
+       $('#saveBtn').on('click', function (e) {
+           e.preventDefault();
+           const data = $('#ConfirmForm').serialize()
+           $.ajax({
+               url: '@Url.Action("Index", "Home")',
+               type: 'POST',
+               data: data,
+               success: function (response) {
+                   Swal.fire({
+                       title: 'Регистрация',
+                       text: response.description,
+                       icon: 'success',
+                       confirmButtonText: 'Ваш аккаунт зарегестрирован'
+                   })
+               },
+               error: function (data) {
+                   Swal.fire({
+                       title: 'Информация',
+                       text: 'Ошибка валидации',
+                       icon: 'error',
+                       confirmButtonText: 'Окей'
+                   })
+               }
+           }) 
+        });
+
+        $('#registerBtn').click(function() {
+    
+      // Получаем email
+      const email = $('#emailInput').val(); 
+      
+      // Задаем атрибут data-email модальному окну  
+      $('#modal').attr('data-email', email);
+      
+      // Открываем модальное окно
+      $('#modal').show();
+      
+    })
+        
+       $('#confirmEmail').on('click', function (e){
+           e.preventDefault();
+           const modal = $('#modal');
+           const data = $('#confirmId').serialize();
+           const name = $('#confirmId').val();
+
+           
+            if (name === undefined || url === undefined) {
+                alert('Упссс.... что-то пошло не так')
+                return;
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Confirm", "Account")',
+                data: name,
+                success: function (response) {
+                    modal.find(".modal-body").html(response);
+                    modal.modal('show')
+                },
+                failure: function () {
+                    modal.modal('hide')
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+       });
+        
+       $(".btn-close").click(function(){
+            modal.modal('hide');
+       });
+       
+       $('#addCarId').on('click', function (e) {
+           e.preventDefault();
+           const data = $('#formSaveCar').serialize();
+           $.ajax({
+              type: 'GET',
+              url: '@Url.Action("Save", "Car")',
+              //type: 'POST',
+              success: function (response) {
+                  $('.modal-dialog').removeClass("modal-lg");
+                  modal.find(".modal-body").html(response);
+                  modal.modal('show')
+              },
+              failure: function () {
+                modal.modal('hide')
+              },
+              error: function (response) {
+                  alert(response.responseText);
+              }
+          });
+       });
+       
+    </script>
+}
